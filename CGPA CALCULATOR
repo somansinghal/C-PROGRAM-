@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <string.h>
+#define SUBJECT_COUNT 5
+typedef struct {
+    int rollNo;
+    char name[100];
+    char section;
+    int marks[SUBJECT_COUNT];
+    float cgpa;
+} Student;
+static float compute_cgpa_from_marks(const int marks[], int count) {
+    int sum = 0;
+    for (int i = 0; i < count; ++i) {
+        sum += marks[i];
+    }
+    float average = (float)sum / (float)count;
+    return average / 10.0f;
+}
+int main(void) {
+    Student s = {0};
+    printf("Enter Roll No.: ");
+    if (scanf("%d", &s.rollNo) != 1) {
+        fprintf(stderr, "Invalid input for Roll No.\n");
+        return 1;
+    }
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF) {}
+    printf("Enter Name: ");
+    if (fgets(s.name, sizeof(s.name), stdin) == NULL) {
+        fprintf(stderr, "Failed to read Name.\n");
+        return 1;
+    }
+    s.name[strcspn(s.name, "\n")] = '\0';
+    printf("Enter Section (single letter): ");
+    if (scanf(" %c", &s.section) != 1) {
+        fprintf(stderr, "Invalid input for Section.\n");
+        return 1;
+    }
+    printf("Enter marks for %d subjects (each 0..100):\n", SUBJECT_COUNT);
+    for (int i = 0; i < SUBJECT_COUNT; ++i) {
+        printf("  Subject %d: ", i + 1);
+        if (scanf("%d", &s.marks[i]) != 1) {
+            fprintf(stderr, "Invalid input for mark %d.\n", i + 1);
+            return 1;
+        }
+        if (s.marks[i] < 0 || s.marks[i] > 100) {
+            fprintf(stderr, "Mark %d out of range (0..100).\n", i + 1);
+            return 1;
+        }
+    }
+    s.cgpa = compute_cgpa_from_marks(s.marks, SUBJECT_COUNT);
+    printf("\nStudent Details:\n");
+    printf("Roll No.: %d\n", s.rollNo);
+    printf("Name: %s\n", s.name);
+    printf("Section: %c\n", s.section);
+    printf("Marks: ");
+    for (int i = 0; i < SUBJECT_COUNT; ++i) {
+        printf("%d%s", s.marks[i], (i + 1 < SUBJECT_COUNT) ? ", " : "\n");
+    }
+    printf("CGPA (10-point scale): %.2f\n", s.cgpa);
+    return 0;
+}
+
