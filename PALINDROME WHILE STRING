@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+int isPalindrome(const char *s) {
+    int left = 0;
+    int right = (int)strlen(s) - 1;
+    while (left < right) {
+        while (left < right && !isalnum((unsigned char)s[left])) left++;
+        while (left < right && !isalnum((unsigned char)s[right])) right--;
+
+        char cl = tolower((unsigned char)s[left]);
+        char cr = tolower((unsigned char)s[right]);
+        if (cl != cr) {
+            return 0;
+        }
+        left++;
+        right--;
+    }
+    return 1;
+}
+int main(void) {
+    char buffer[1024];
+    printf("Enter a string: ");
+    if (!fgets(buffer, sizeof(buffer), stdin)) {
+        fprintf(stderr, "Failed to read input.\n");
+        return 1;
+    }
+    size_t len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+    if (isPalindrome(buffer)) {
+        printf("\"%s\" is a palindrome.\n", buffer);
+    } else {
+        printf("\"%s\" is not a palindrome.\n", buffer);
+    }
+
+    return 0;
+}
